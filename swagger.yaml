@@ -1,0 +1,1126 @@
+openapi: 3.0.3
+info:
+  title: VBI-Learning API Documentation
+  description: API documentation for VBI-Learning platform
+  version: 1.0.0
+servers:
+  - url: https://vbi-learning-api.example.com
+tags:
+  - name: Auth
+    description: Authentication operations
+paths:
+  /api/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      operationId: registerUser
+      requestBody:
+        description: User registration data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 615bc76b2c751d001fc437e5
+                  name:
+                    type: string
+                    example: John Doe
+                  email:
+                    type: string
+                    example: 12345@example.com
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2021-10-06T10:25:35.232Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2021-10-06T10:25:35.232Z'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User with this email already exists.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred while registering the user.
+
+  /api/login:
+    post:
+      tags:
+        - Auth
+      summary: User login
+      operationId: userLogin
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: string
+                example: oke
+        '400':
+          description: Bad request or Invalid Name
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error . Try again.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error . Try again.
+
+  /api/logout:
+    get:
+      tags:
+        - Auth
+      summary: User logout
+      operationId: userLogout
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Signout Success
+        '400':
+          description: Error during logout
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error . Try again.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error . Try again.
+
+  /api/current-user:
+    get:
+      tags:
+        - Auth
+      summary: Get current user
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unauthorized
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error during retrieving current user information.
+
+  /api/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: Request password reset
+      operationId: requestPasswordReset
+      requestBody:
+        description: User's email address for password reset
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+      responses:
+        '200':
+          description: Password reset request sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '400':
+          description: Bad request or User not found
+          content:
+            application/json:
+              schema:
+                type: string
+                example: User not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error during processing the request.
+
+  /api/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset password
+      operationId: resetPassword
+      requestBody:
+        description: User's email, reset code, and new password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+                code:
+                  type: string
+                  example: reset-token-123
+                newPassword:
+                  type: string
+                  example: newsecret123
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset successful
+        '400':
+          description: Bad request or Invalid email or code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid email or code
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred while processing the request.
+
+  /api/course/upload-image:
+    post:
+      tags:
+        - Course
+      summary: Upload image files
+      operationId: uploadImageFiles
+      requestBody:
+        description: Image files to upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Image files uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully uploaded
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          example: image-file-name.jpg
+                        presignedUrl:
+                          type: string
+                          example: https://s3.example.com/image-file-name.jpg
+        '400':
+          description: Bad request or Missing files
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example:
+                      Bad request: Missing files in the request
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+
+  /api/course/create:
+    post:
+      tags:
+        - Course
+      summary: Create a new course
+      operationId: createCourse
+      requestBody:
+        description: Course data to create
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Course Title
+                description:
+                  type: string
+                  example: Course description Add other properties here
+                image:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 615bd5475e63f4166cccd6d2
+                  name:
+                    type: string
+                    example: Course Title
+                  description:
+                    type: string
+                    example: Course description Other course properties
+        '400':
+          description: Bad request or Title is taken
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Title is taken
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Course create failed. Try again
+
+  /api/course/lesson/{slug}/{instructorId}:
+    post:
+      tags:
+        - Course
+      summary: Add a new lesson to a course
+      operationId: addLesson
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the course
+        - name: instructorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the instructor
+      requestBody:
+        description: Lesson data to add
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Lesson Title
+                content:
+                  type: string
+                  example: Lesson content
+                video:
+                  type: string
+                  example: video-file-name.mp4
+      responses:
+        '201':
+          description: Lesson added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully uploaded and added lesson
+        '400':
+          description: Bad request or Add lesson failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Add lesson failed
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+
+    put:
+      tags:
+        - Course
+      summary: Update a lesson in a course
+      operationId: updateLesson
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the course
+        - name: instructorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the instructor
+      requestBody:
+        description: Lesson data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: 615c83df157e024c78e7a294
+                title:
+                  type: string
+                  example: Updated Lesson Title
+                content:
+                  type: string
+                  example: Updated lesson content
+                video:
+                  type: string
+                  example: updated-video-file-name.mp4
+                free_preview:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Lesson updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '400':
+          description: Bad request or Update Lesson Failed
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Update Lesson Failed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unauthorized
+
+  /api/course/{slug}/{lessonId}:
+    put:
+      tags:
+        - Course
+      summary: Update a lesson in a course
+      operationId: updateLesson
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the course
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the lesson
+      requestBody:
+        description: Lesson data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Lesson Title
+                content:
+                  type: string
+                  example: Updated lesson content
+                video:
+                  type: string
+                  example: updated-video-file-name.mp4
+                free_preview:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Lesson updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '400':
+          description: Bad request or Update Lesson Failed
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Update Lesson Failed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unauthorized
+
+  /api/course/publish/{courseId}:
+    put:
+      tags:
+        - Course
+      summary: Publish a course
+      operationId: publishCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course
+      responses:
+        '200':
+          description: Course published successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 615c83df157e024c78e7a294
+                  name:
+                    type: string
+                    example: Published Course Name
+                  published:
+                    type: boolean
+                    example: true
+        '400':
+          description: Bad request or Publish course failed
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Publish course failed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unauthorized
+
+  /api/course/unpublish/{courseId}:
+    put:
+      tags:
+        - Course
+      summary: Unpublish a course
+      operationId: unpublishCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course
+      responses:
+        '200':
+          description: Course unpublished successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 615c83df157e024c78e7a294
+                  name:
+                    type: string
+                    example: Unpublished Course Name
+                  published:
+                    type: boolean
+                    example: false
+        '400':
+          description: Bad request or Unpublish course failed
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unpublish course failed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Unauthorized
+
+  /api/check-enrollment/{courseId}:
+    get:
+      tags:
+        - Course
+      summary: Check if a user is enrolled in a course
+      operationId: checkEnrollment
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course
+      responses:
+        '200':
+          description: Check enrollment status
+          content:
+            application/json:
+              example:
+                status: true
+                course: { /* Course details */ }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example: Unauthorized
+
+  /api/free-enrollment/{courseId}:
+    post:
+      tags:
+        - Course
+      summary: Enroll user in a course for free
+      operationId: freeEnrollment
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course
+      requestBody:
+        description: User data for enrollment
+        required: true
+        content:
+          application/json:
+            example:
+              user: { /* User data */ }
+      responses:
+        '200':
+          description: User enrolled successfully
+          content:
+            application/json:
+              example:
+                message: Congratulation! You have successfully enrolled!
+                course: { /* Course details */ }
+        '400':
+          description: Bad request or Enrollment create failed
+          content:
+            application/json:
+              example: Enrollment create failed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example: Unauthorized
+  /api/user-courses:
+    get:
+      tags:
+        - Course
+      summary: Get courses enrolled by a user
+      operationId: userCourses
+      responses:
+        '200':
+          description: List of user's enrolled courses
+          content:
+            application/json:
+              example:
+                - { /* Course details */ }
+                - { /* Course details */ }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example: Unauthorized
+  /api/mark-completed:
+    post:
+      tags:
+        - Course
+      summary: Mark a lesson as completed
+      operationId: markCompleted
+      requestBody:
+        description: Lesson and course data to mark as completed
+        required: true
+        content:
+          application/json:
+            example:
+              courseId: 615c83df157e024c78e7a294
+              lessonId: 615c83df157e024c78e7a295
+      responses:
+        '200':
+          description: Lesson marked as completed
+          content:
+            application/json:
+              example:
+                ok: true
+        '400':
+          description: Bad request or Mark Lesson Completed Failed
+          content:
+            application/json:
+              example: Mark Lesson Completed Failed
+
+  /api/list-completed:
+    post:
+      tags:
+        - Course
+      summary: Get list of completed lessons for a course
+      operationId: getCompletedLessons
+      requestBody:
+        description: Course data to get completed lessons list
+        required: true
+        content:
+          application/json:
+            example:
+              courseId: 615c83df157e024c78e7a294
+      responses:
+        '200':
+          description: List of completed lesson IDs
+          content:
+            application/json:
+              example:
+                - 615c83df157e024c78e7a295
+        '400':
+          description: Bad request or Error getting completed lesson
+          content:
+            application/json:
+              example: Error getting completed lesson
+
+  /api/mark-incomplete:
+    post:
+      tags:
+        - Course
+      summary: Mark a lesson as incomplete
+      operationId: markIncomplete
+      requestBody:
+        description: Lesson and course data to mark as incomplete
+        required: true
+        content:
+          application/json:
+            example:
+              courseId: 615c83df157e024c78e7a294
+              lessonId: 615c83df157e024c78e7a295
+      responses:
+        '200':
+          description: Lesson marked as incomplete
+          content:
+            application/json:
+              example:
+                ok: true
+        '400':
+          description: Bad request or Mark Lesson Incomplete Failed
+          content:
+            application/json:
+              example: Mark Lesson Incomplete Failed
+  /mentor/create:
+    post:
+      tags:
+        - Mentor
+      summary: Create a new mentor
+      operationId: createMentor
+      requestBody:
+        description: Mentor data to be created
+        required: true
+        content:
+          application/json:
+            example:
+              mentoring_title: 'Mentoring Title'
+              mentoring_owner: 'Mentor Owner'
+      responses:
+        '201':
+          description: Mentor created successfully
+          content:
+            application/json:
+              example: { /* Mentor details */ }
+        '500':
+          description: Failed to create mentor
+          content:
+            application/json:
+              example: { error: 'Failed to create mentor' }
+
+  /mentor/update/{mentorId}:
+    put:
+      tags:
+        - Mentor
+      summary: Update an existing mentor
+      operationId: updateMentor
+      parameters:
+        - name: mentorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the mentor to be updated
+      requestBody:
+        description: Mentor data to be updated
+        required: true
+        content:
+          application/json:
+            example:
+              mentoring_title: 'Updated Mentoring Title'
+              mentoring_owner: 'Updated Mentor Owner'
+      responses:
+        '200':
+          description: Mentor updated successfully
+          content:
+            application/json:
+              example: { /* Updated mentor details */ }
+        '500':
+          description: Failed to update mentor
+          content:
+            application/json:
+              example: { error: 'Failed to update mentor' }
+
+  /mentor/delete/{mentorId}:
+    delete:
+      tags:
+        - Mentor
+      summary: Delete a mentor
+      operationId: deleteMentor
+      parameters:
+        - name: mentorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the mentor to be deleted
+      responses:
+        '200':
+          description: Mentor deleted successfully
+          content:
+            application/json:
+              example: { message: 'Mentor deleted successfully' }
+        '500':
+          description: Failed to delete mentor
+          content:
+            application/json:
+              example: { error: 'Failed to delete mentor' }
+
+  /mentor/{mentorId}:
+    get:
+      tags:
+        - Mentor
+      summary: Get mentor details by ID
+      operationId: getMentorById
+      parameters:
+        - name: mentorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the mentor to fetch details
+      responses:
+        '200':
+          description: Mentor details
+          content:
+            application/json:
+              example: { /* Mentor details */ }
+        '500':
+          description: Failed to get mentor
+          content:
+            application/json:
+              example: { error: 'Failed to get mentor' }
+
+  /mentors:
+    get:
+      tags:
+        - Mentor
+      summary: Get details of all mentors
+      operationId: getAllMentors
+      responses:
+        '200':
+          description: List of all mentors
+          content:
+            application/json:
+              example: [{ /* Mentor details */ }, { /* Mentor details */ }]
+        '500':
+          description: Failed to get mentors
+          content:
+            application/json:
+              example: { error: 'Failed to get mentors' }
+
+  /pool/create:
+    post:
+      tags:
+        - Pool
+      summary: Create a new pool
+      operationId: createPool
+      requestBody:
+        description: Pool data to be created
+        required: true
+        content:
+          application/json:
+            example:
+              pool_id: 'pool123'
+              owner_id: 'user123'
+              minimum_stake: 10
+              maximum_stake: 100
+              staking_period: 30
+              unstaking_period: 15
+              description: 'Sample pool description'
+              image: 'pool_image_url'
+      responses:
+        '201':
+          description: Pool created successfully
+          content:
+            application/json:
+              example: { /* Created pool details */ }
+        '500':
+          description: Failed to create pool
+          content:
+            application/json:
+              example: { error: 'Failed to create pool' }
+
+  /pool/update/{poolId}:
+    put:
+      tags:
+        - Pool
+      summary: Update an existing pool
+      operationId: updatePool
+      parameters:
+        - name: poolId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the pool to be updated
+      requestBody:
+        description: Pool data to be updated
+        required: true
+        content:
+          application/json:
+            example: /* Updated pool data example */
+      responses:
+        '200':
+          description: Pool updated successfully
+          content:
+            application/json:
+              example: { /* Updated pool details */ }
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              example: { error: 'Pool not found' }
+        '500':
+          description: Failed to update pool
+          content:
+            application/json:
+              example: { error: 'Failed to update pool' }
+
+  /pool/delete/{poolId}:
+    delete:
+      tags:
+        - Pool
+      summary: Delete a pool
+      operationId: deletePool
+      parameters:
+        - name: poolId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the pool to be deleted
+      responses:
+        '200':
+          description: Pool deleted successfully
+          content:
+            application/json:
+              example: { message: 'Pool deleted successfully' }
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              example: { error: 'Pool not found' }
+        '500':
+          description: Failed to delete pool
+          content:
+            application/json:
+              example: { error: 'Failed to delete pool' }
+
+  /pool/{poolId}:
+    get:
+      tags:
+        - Pool
+      summary: Get pool details by ID
+      operationId: getByPoolId
+      parameters:
+        - name: poolId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the pool to fetch details
+      responses:
+        '200':
+          description: Pool details
+          content:
+            application/json:
+              example: { /* Pool details */ }
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              example: { error: 'Pool not found' }
+        '500':
+          description: Failed to get pool
+          content:
+            application/json:
+              example: { error: 'Failed to get pool by pool_id' }
+
+  /pool:
+    get:
+      tags:
+        - Pool
+      summary: Get details of all pools
+      operationId: getAllPools
+      responses:
+        '200':
+          description: List of all pools
+          content:
+            application/json:
+              example: [{ /* Pool details */ }, { /* Pool details */ }]
+        '500':
+          description: Failed to get all pools
+          content:
+            application/json:
+              example: { error: 'Failed to get all pools' }
